@@ -20,9 +20,72 @@ model User {
   contactNo String
   address String
   profileImg String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviewAndRating  ReviewAndRating[]
+  orders Order[]
+
+  @@map("users")
 }
 enum UserRole {
   admin
   customer
 
+}
+
+model Category {
+  id String @id @default(uuid())
+  title String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  books Book[]
+  @@map("categories")
+}
+
+model Book {
+  id String @id @default(uuid())
+  title String
+  author String
+  price String
+  genre String
+  publicationDate String
+  categoryId String
+  category Category @relation(fields: [categoryId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviewAndRating  ReviewAndRating[]
+  @@map("books")
+}
+
+model ReviewAndRating {
+  id String @id @default(uuid())
+  review String
+  rating String
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  bookId String
+  book Book @relation(fields: [bookId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews_rataing")
+
+}
+
+model Order {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  orderedBooks Json
+  status OrderStatus @default(pending)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  pending
+  shipped
+  delivered
 }
